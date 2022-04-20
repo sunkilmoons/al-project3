@@ -39,13 +39,24 @@ public class Main {
      * Then the trick is to figure out how to define c[i][j] as a function of its subproblems if the substring has
      * more than 1 character in it and that substring is not in the word list itself.
      *
+     * This is a bottom up approach
      * @param inputWord the word to split from the dictionary
      * @return input words split into the minimum number of words from the dictionary
      */
     static List<String> splitIntoWords(String inputWord) {
-        int[][] cuts = new int[inputWord.length()][inputWord.length()];
+        final int n = inputWord.length();
+        int[][] cuts = new int[n][n];
+
+        // init cuts to 0
+        for (int i = 0; i < n; i++) cuts[i][0] = 0;
+        for (int j = 0; j < n; j++) cuts[0][j] = 0;
+
+        for (int i = 1; i < n; i++) {
+            for (int j = 1; j < n; j++) {
 
 
+            }
+        }
 
         return Collections.emptyList();
     }
