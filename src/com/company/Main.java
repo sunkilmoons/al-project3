@@ -1,10 +1,7 @@
 package com.company;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
@@ -19,8 +16,28 @@ public class Main {
         loadDictionary(dictFile);
 
         List<String> splitWords = splitIntoWords(inputWord);
+        List<String> correctAnswer = assertAnswerIsCorrectForInput(inputWord, splitWords);
 
-        printResult(inputWord, splitWords);
+        if (correctAnswer != null) {
+            System.out.printf(
+                    "Your answer is not correct. Yours: %s\nCorrect answer: %s\n",
+                    String.join(", ", splitWords),
+                    String.join(", ", correctAnswer)
+            );
+        }
+        else printResult(inputWord, splitWords);
+
+    }
+
+    static List<String> assertAnswerIsCorrectForInput(String inputWord, List<String> splitWords) {
+        List<String> correctAnswer;
+        switch (inputWord) {
+            case "aliceinwonderland":
+                correctAnswer = Arrays.asList("alice", "in", "wonderland");
+                if (!splitWords.equals(correctAnswer)) return correctAnswer;
+            default:
+                return null;
+        }
     }
 
     /**
@@ -45,20 +62,30 @@ public class Main {
      */
     static List<String> splitIntoWords(String inputWord) {
         final int n = inputWord.length();
-        int[][] cuts = new int[n][n];
+        int[][] cuts = new int[n + 1][n + 1];
 
-        // init cuts to 0
-        for (int i = 0; i < n; i++) cuts[i][0] = 0;
-        for (int j = 0; j < n; j++) cuts[0][j] = 0;
+        Stack<String> words = new Stack<>();
 
-        for (int i = 1; i < n; i++) {
-            for (int j = 1; j < n; j++) {
+        System.out.printf("n = %d", n);
+        for (int i = n - 1; i >= 0; i--) {
+            for (int j = i; j <= n - 1; j++) {
+                System.out.printf("i = %d, j = %d, count = %d, ", i, j, cuts[i][j]);
+                String substring = inputWord.substring(i, j + 1);
+                System.out.printf("substring = %s\n", substring);
 
+                if (dictionary.contains(substring) && cuts[i][j] == 0 && cuts[i][j + 1] > 0) {
+                    words.pop();
+                    words.push(substring);
+                }
+                else if (dictionary.contains(substring) && cuts[i][j] == 0) {
+                    cuts[i][j] = 1;
+                    words.push(substring);
+                }
 
             }
         }
 
-        return Collections.emptyList();
+        return words;
     }
 
     static void loadDictionary(String fileName) {
