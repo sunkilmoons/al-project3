@@ -25,8 +25,7 @@ public class Main {
                     String.join(", ", splitWords),
                     String.join(", ", correctAnswer)
             );
-        }
-        else printResult(inputWord, splitWords);
+        } else printResult(inputWord, splitWords);
 
     }
 
@@ -36,9 +35,11 @@ public class Main {
             case "aliceinwonderland":
                 correctAnswer = Arrays.asList("alice", "in", "wonderland");
                 if (!splitWords.equals(correctAnswer)) return correctAnswer;
-                case "williamwillwritewonderfulwalrus":
-                    correctAnswer = Arrays.asList("william will write wonderful walrus");
-                    if (!splitWords.equals(correctAnswer)) return correctAnswer;
+                break;
+            case "williamwillwritewonderfulwalrus":
+                correctAnswer = Arrays.asList("william will write wonderful walrus");
+                if (!splitWords.equals(correctAnswer)) return correctAnswer;
+                break;
             default:
                 return null;
         }
@@ -59,8 +60,9 @@ public class Main {
      * in it, but that character is not a word in the word list).
      * Then the trick is to figure out how to define c[i][j] as a function of its subproblems if the substring has
      * more than 1 character in it and that substring is not in the word list itself.
-     *
+     * <p>
      * This is a bottom up approach
+     *
      * @param inputWord the word to split from the dictionary
      * @return input words split into the minimum number of words from the dictionary
      */
@@ -83,12 +85,10 @@ public class Main {
                     if (substring.contains(lastWord)) {
                         words.remove(lastWord);
                         words.add(substring);
-                    }
-                    else if (!lastWord.contains(substring)) {
+                    } else if (!lastWord.contains(substring)) {
                         words.add(substring);
                     }
-                }
-                else if (dictionary.contains(substring)) {
+                } else if (dictionary.contains(substring)) {
                     words.add(substring);
                     break;
                 }
