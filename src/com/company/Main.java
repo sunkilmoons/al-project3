@@ -43,6 +43,7 @@ public class Main {
             default:
                 return null;
         }
+        return correctAnswer;
     }
 
     /**
