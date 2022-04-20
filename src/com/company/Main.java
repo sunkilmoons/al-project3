@@ -37,13 +37,13 @@ public class Main {
                 if (!splitWords.equals(correctAnswer)) return correctAnswer;
                 break;
             case "williamwillwritewonderfulwalrus":
-                correctAnswer = Arrays.asList("william will write wonderful walrus");
+                correctAnswer = Arrays.asList("william", "will", "write", "wonderful", "walrus");
                 if (!splitWords.equals(correctAnswer)) return correctAnswer;
                 break;
             default:
                 return null;
         }
-        return correctAnswer;
+        return null;
     }
 
     /**
@@ -70,27 +70,24 @@ public class Main {
     static List<String> splitIntoWords(String inputWord) {
         final int n = inputWord.length();
         int[][] cuts = new int[n][n];
+        int i;
+        int j;
 
-        ArrayList<String> words = new ArrayList<>();
+        Stack<String> words = new Stack<>();
 
         System.out.printf("\nn = %d\n", n);
-        for (int i = 0; i < n; i++) {
-            for (int j = n - 1; j >= i; j--) {
+        for (i = 0; i < n; i++) {
+            for (j = n - 1; j >= i; j--) {
+                cuts[i][j] = cuts[i][j -1];
 
                 System.out.printf("i = %d, j = %d, count = %d, ", i, j, cuts[i][j]);
                 String substring = inputWord.substring(i, j + 1);
                 System.out.printf("substring = %s\n", substring);
 
-                if (dictionary.contains(substring) && !words.isEmpty()) {
-                    String lastWord = words.get(words.size() - 1);
-                    if (substring.contains(lastWord)) {
-                        words.remove(lastWord);
-                        words.add(substring);
-                    } else if (!lastWord.contains(substring)) {
-                        words.add(substring);
-                    }
-                } else if (dictionary.contains(substring)) {
-                    words.add(substring);
+                if (dictionary.contains(substring)) {
+                    i = j;
+                    words.push(substring);
+                    System.out.printf("Contains %s\n", substring);
                     break;
                 }
             }
