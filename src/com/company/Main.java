@@ -6,16 +6,21 @@ import java.util.*;
 public class Main {
 
     static HashSet<String> dictionary = new HashSet<>();
+    static final boolean log = false;
 
     public static void main(String[] args) {
-//        List<String> inputWords = // when not testing load input words and repeat for each input word.
 
-        //String inputWord = "aliceinwonderland";
-        String inputWord = "williamwillwritewonderfulwalrus";
+        ArrayList<String> inputWords = new ArrayList<>();
+        loadWordsToCollection("./data/input.txt", inputWords);
 
         String dictFile = "./data/aliceInWonderlandDictionary.txt";
-        loadDictionary(dictFile);
+        loadWordsToCollection(dictFile, dictionary);
 
+        for (String inputWord : inputWords)
+            checkCorrectAnswer(inputWord);
+    }
+
+    static void checkCorrectAnswer(String inputWord) {
         List<String> splitWords = splitIntoWords(inputWord);
         List<String> correctAnswer = assertAnswerIsCorrectForInput(inputWord, splitWords);
 
@@ -26,7 +31,6 @@ public class Main {
                     String.join(", ", correctAnswer)
             );
         } else printResult(inputWord, splitWords);
-
     }
 
     static List<String> assertAnswerIsCorrectForInput(String inputWord, List<String> splitWords) {
@@ -34,16 +38,30 @@ public class Main {
         switch (inputWord) {
             case "aliceinwonderland":
                 correctAnswer = Arrays.asList("alice", "in", "wonderland");
-                if (!splitWords.equals(correctAnswer)) return correctAnswer;
                 break;
             case "williamwillwritewonderfulwalrus":
-                correctAnswer = Arrays.asList("william will write wonderful walrus");
-                if (!splitWords.equals(correctAnswer)) return correctAnswer;
+                correctAnswer = Arrays.asList("william", "will", "write", "wonderful", "walrus");
+                break;
+            case "tonguetoes":
+                correctAnswer = Arrays.asList("tongue", "toes");
+                break;
+            case "suddenly":
+                correctAnswer = Arrays.asList("suddenly");
+                break;
+            case "alicee":
+                correctAnswer = Arrays.asList("alice");
+                break;
+            case "tacosaregood":
+                correctAnswer = Collections.emptyList();
+                break;
+            case "tiredtinytoes":
+                correctAnswer = Arrays.asList("tired", "tiny", "toes");
                 break;
             default:
                 return null;
         }
-        return correctAnswer;
+        if (!splitWords.equals(correctAnswer)) return correctAnswer;
+        return null;
     }
 
     /**
@@ -75,7 +93,7 @@ public class Main {
 
         ArrayList<String> words = new ArrayList<>();
 
-        System.out.printf("\nn = %d\n", n);
+        if (log) System.out.printf("\nn = %d\n", n);
 
         for(i = 0; i <= n; i++) {
         	cuts[i][0] = 0;
@@ -85,7 +103,7 @@ public class Main {
         }
         for(i = 1; i <= n; i++) {
         	for(j = i; j <= n; j++) {
-        		System.out.printf("i = %d, j = %d, ", i, j);
+                if (log) System.out.printf("i = %d, j = %d, ", i, j);
                 String substring = inputWord.substring(i-1, j);
                 if(dictionary.contains(substring)) {
                 	cuts[i][j] = cuts[i-1][j-1] + substring.length();
@@ -94,13 +112,13 @@ public class Main {
                 else {
                 	cuts[i][j] = Math.max(cuts[i-1][j], cuts[i][j-1]);
                 }
-                System.out.printf("count = %d, substring = %s\n", cuts[i][j], substring);
+                if (log) System.out.printf("count = %d, substring = %s\n", cuts[i][j], substring);
             }
         }
         j=n;
         for(i=n; i>0;) {
             if(dictionary.contains(frag[i][j]) && cuts[i][j] > cuts[i-1][j] && cuts[i][j] > cuts[i][j-1]) {
-            	System.out.println(frag[i][j]);
+                if (log) System.out.println(frag[i][j]);
             	words.add(frag[i][j]);
             	i--;
             	j--;
@@ -114,25 +132,21 @@ public class Main {
             	}
             }
         }
-
+        Collections.reverse(words);
         return words;
     }
     
     
 
-    static void loadDictionary(String fileName) {
+    static void loadWordsToCollection(String fileName, Collection<String> c) {
         try {
             File file = new File(fileName);
 
             Scanner sc = new Scanner(file);
 
             while (sc.hasNextLine()) {
-                String word = sc.nextLine();
-                dictionary.add(word);
+                c.add(sc.nextLine().trim());
             }
-
-            System.out.printf("Successfully loaded dictionary. Words are: %s", dictionary.toString());
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -140,7 +154,7 @@ public class Main {
 
     static void printResult(String inputWord, List<String> splitWords) {
         System.out.printf(
-                "%s can be split into %d AiW words: %s",
+                "%s can be split into %d AiW words: %s\n",
                 inputWord,
                 splitWords.size(),
                 String.join(", ", splitWords)
