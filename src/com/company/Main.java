@@ -10,7 +10,7 @@ public class Main {
     public static void main(String[] args) {
 //        List<String> inputWords = // when not testing load input words and repeat for each input word.
 
-//        String inputWord = "aliceinwonderland";
+        //String inputWord = "aliceinwonderland";
         String inputWord = "williamwillwritewonderfulwalrus";
 
         String dictFile = "./data/aliceInWonderlandDictionary.txt";
@@ -37,13 +37,13 @@ public class Main {
                 if (!splitWords.equals(correctAnswer)) return correctAnswer;
                 break;
             case "williamwillwritewonderfulwalrus":
-                correctAnswer = Arrays.asList("william", "will", "write", "wonderful", "walrus");
+                correctAnswer = Arrays.asList("william will write wonderful walrus");
                 if (!splitWords.equals(correctAnswer)) return correctAnswer;
                 break;
             default:
                 return null;
         }
-        return null;
+        return correctAnswer;
     }
 
     /**
@@ -52,9 +52,9 @@ public class Main {
      * needed to cut the substring starting on the ith character and ending on the jth character into words.
      * If it is not possible to cut, then assign it a value that is infeasible, (e.g., -1). Any time you see that
      * value in the array, that would mean that you cannot split that substring into words.
-     * So in the first example above, c[5][12] would correspond to the substring “inwonder”. Then you want to set
-     * c[5][12] to be 2 because this can be split into “in wonder”.
-     * In the first example, c[6][10] would correspond to the substring “nwond”. This cannot be split into words in
+     * So in the first example above, c[5][12] would correspond to the substring â€œinwonderâ€�. Then you want to set
+     * c[5][12] to be 2 because this can be split into â€œin wonderâ€�.
+     * In the first example, c[6][10] would correspond to the substring â€œnwondâ€�. This cannot be split into words in
      * the word list, and therefore could set c[6][10] to be -1.
      * The base cases could be c[i][j] = 1 if the substring corresponding to i and j is in the word list, and
      * c[i][i] = 0 if the ith character is not a word in the word list (i.e., the subproblem has only one character
@@ -69,32 +69,56 @@ public class Main {
      */
     static List<String> splitIntoWords(String inputWord) {
         final int n = inputWord.length();
-        int[][] cuts = new int[n][n];
-        int i;
-        int j;
+        int[][] cuts = new int[n+1][n+1];
+        String[][] frag = new String[n+1][n+1];
+        int i,j;
 
-        Stack<String> words = new Stack<>();
+        ArrayList<String> words = new ArrayList<>();
 
         System.out.printf("\nn = %d\n", n);
-        for (i = 0; i < n; i++) {
-            for (j = n - 1; j >= i; j--) {
-                cuts[i][j] = cuts[i][j -1];
 
-                System.out.printf("i = %d, j = %d, count = %d, ", i, j, cuts[i][j]);
-                String substring = inputWord.substring(i, j + 1);
-                System.out.printf("substring = %s\n", substring);
-
-                if (dictionary.contains(substring)) {
-                    i = j;
-                    words.push(substring);
-                    System.out.printf("Contains %s\n", substring);
-                    break;
+        for(i = 0; i <= n; i++) {
+        	cuts[i][0] = 0;
+        }
+        for(j = 0; j <= n; j++) {
+        	cuts[j][0] = 0;
+        }
+        for(i = 1; i <= n; i++) {
+        	for(j = i; j <= n; j++) {
+        		System.out.printf("i = %d, j = %d, ", i, j);
+                String substring = inputWord.substring(i-1, j);
+                if(dictionary.contains(substring)) {
+                	cuts[i][j] = cuts[i-1][j-1] + substring.length();
+                	frag[i][j] = substring;
                 }
+                else {
+                	cuts[i][j] = Math.max(cuts[i-1][j], cuts[i][j-1]);
+                }
+                System.out.printf("count = %d, substring = %s\n", cuts[i][j], substring);
+            }
+        }
+        j=n;
+        for(i=n; i>0;) {
+            if(dictionary.contains(frag[i][j]) && cuts[i][j] > cuts[i-1][j] && cuts[i][j] > cuts[i][j-1]) {
+            	System.out.println(frag[i][j]);
+            	words.add(frag[i][j]);
+            	i--;
+            	j--;
+            }
+            else {
+            	if(cuts[i-1][j]>= cuts[i][j-1]) {
+            		i--;
+            	}
+            	else{
+            		j--;
+            	}
             }
         }
 
         return words;
     }
+    
+    
 
     static void loadDictionary(String fileName) {
         try {
