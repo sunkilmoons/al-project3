@@ -11,14 +11,13 @@ public class Main {
     public static void main(String[] args) {
 
         ArrayList<String> inputWords = new ArrayList<>();
-        loadWordsToCollection("./data/input.txt", inputWords);
+        loadWordsToCollection("./input.txt", inputWords);
 
-        String dictFile = "./data/aliceInWonderlandDictionary.txt";
+        String dictFile = "./aliceInWonderlandDictionary.txt";
         loadWordsToCollection(dictFile, dictionary);
 
         for (String inputWord : inputWords)
             printResult(inputWord, splitIntoWords(inputWord));
-//            checkCorrectAnswer(inputWord);
     }
 
     static void checkCorrectAnswer(String inputWord) {
@@ -99,12 +98,6 @@ public class Main {
 
         if (log) System.out.printf("\nn = %d\n", n);
 
-        for(i = 0; i <= n; i++) {
-        	cuts[i][0] = 0;
-        }
-        for(j = 0; j <= n; j++) {
-        	cuts[j][0] = 0;
-        }
         for(i = 1; i <= n; i++) {
         	for(j = i; j <= n; j++) {
                 if (log) System.out.printf("i = %d, j = %d, ", i, j);
@@ -160,6 +153,7 @@ public class Main {
                 c.add(sc.nextLine().trim());
             }
         } catch (Exception e) {
+            System.out.printf("ERROR: Failed to find file: %s.\n", fileName);
             e.printStackTrace();
         }
     }
