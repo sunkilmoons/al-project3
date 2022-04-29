@@ -3,7 +3,7 @@ package com.company;
 import java.io.File;
 import java.util.*;
 
-public class Main {
+public class Project3 {
 
     static HashSet<String> dictionary = new HashSet<>();
     static final boolean log = false;
@@ -18,48 +18,6 @@ public class Main {
 
         for (String inputWord : inputWords)
             printResult(inputWord, splitIntoWords(inputWord));
-    }
-
-    static void checkCorrectAnswer(String inputWord) {
-        List<String> splitWords = splitIntoWords(inputWord);
-        List<String> correctAnswer = assertAnswerIsCorrectForInput(inputWord, splitWords);
-
-        if (correctAnswer != null) {
-            System.out.printf(
-                    "Your answer is not correct. Yours: %s\nCorrect answer: %s\n",
-                    String.join(", ", splitWords),
-                    String.join(", ", correctAnswer)
-            );
-        } else printResult(inputWord, splitWords);
-    }
-
-    static List<String> assertAnswerIsCorrectForInput(String inputWord, List<String> splitWords) {
-        List<String> correctAnswer;
-        switch (inputWord) {
-            case "aliceinwonderland":
-                correctAnswer = Arrays.asList("alice", "in", "wonderland");
-                break;
-            case "williamwillwritewonderfulwalrus":
-                correctAnswer = Arrays.asList("william", "will", "write", "wonderful", "walrus");
-                break;
-            case "tonguetoes":
-                correctAnswer = Arrays.asList("tongue", "toes");
-                break;
-            case "suddenly":
-                correctAnswer = Arrays.asList("suddenly");
-                break;
-            case "alicee":
-            case "tacosaregood":
-                correctAnswer = Collections.emptyList();
-                break;
-            case "tiredtinytoes":
-                correctAnswer = Arrays.asList("tired", "tiny", "toes");
-                break;
-            default:
-                return null;
-        }
-        if (!splitWords.equals(correctAnswer)) return correctAnswer;
-        return null;
     }
 
     /**
@@ -140,7 +98,8 @@ public class Main {
             }
         }
         Collections.reverse(words);
-        return inputWord.isEmpty() ? words : Collections.emptyList();
+        if (inputWord.isEmpty()) { return words; }
+        else { return new ArrayList<>(); }
     }
 
     static void loadWordsToCollection(String fileName, Collection<String> c) {
@@ -160,11 +119,16 @@ public class Main {
 
     static void printResult(String inputWord, List<String> splitWords) {
         if (splitWords.isEmpty()) System.out.printf("%s cannot be split into AiW words.\n", inputWord);
-        else System.out.printf(
-                    "%s can be split into %d AiW words: %s\n",
+        else {
+            System.out.printf(
+                    "%s can be split into %d AiW words: ",
                     inputWord,
-                    splitWords.size(),
-                    String.join(", ", splitWords)
+                    splitWords.size()
             );
+            for (int i = 0; i < splitWords.size() - 1; i++) {
+                System.out.printf("%s, ", splitWords.get(i));
+            }
+            System.out.printf("%s\n", splitWords.get(splitWords.size() - 1));
+        }
     }
 }
