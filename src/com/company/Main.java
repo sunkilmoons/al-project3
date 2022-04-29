@@ -17,7 +17,8 @@ public class Main {
         loadWordsToCollection(dictFile, dictionary);
 
         for (String inputWord : inputWords)
-            checkCorrectAnswer(inputWord);
+            printResult(inputWord, splitIntoWords(inputWord));
+//            checkCorrectAnswer(inputWord);
     }
 
     static void checkCorrectAnswer(String inputWord) {
@@ -49,8 +50,6 @@ public class Main {
                 correctAnswer = Arrays.asList("suddenly");
                 break;
             case "alicee":
-                correctAnswer = Arrays.asList("alice");
-                break;
             case "tacosaregood":
                 correctAnswer = Collections.emptyList();
                 break;
@@ -82,10 +81,15 @@ public class Main {
      * <p>
      * This is a bottom up approach
      *
-     * @param inputWord the word to split from the dictionary
+     * @param iw the word to split from the dictionary
      * @return input words split into the minimum number of words from the dictionary
      */
-    static List<String> splitIntoWords(String inputWord) {
+    static List<String> splitIntoWords(String iw) {
+
+        char[] ca = iw.toCharArray();
+        String inputWord = String.copyValueOf(ca);
+        StringBuilder sb = new StringBuilder();
+
         final int n = inputWord.length();
         int[][] cuts = new int[n+1][n+1];
         String[][] frag = new String[n+1][n+1];
@@ -120,6 +124,16 @@ public class Main {
             if(dictionary.contains(frag[i][j]) && cuts[i][j] > cuts[i-1][j] && cuts[i][j] > cuts[i][j-1]) {
                 if (log) System.out.println(frag[i][j]);
             	words.add(frag[i][j]);
+
+                // remove words from input word starting at the last occurrence
+                // this is to assure that at the end, all words were found and split from the dictionary
+                int end = inputWord.lastIndexOf(frag[i][j]);
+                if (end == 0) sb.append(inputWord, frag[i][j].length(), inputWord.length());
+                else sb.append(inputWord, 0, end);
+                inputWord = sb.toString();
+                sb.setLength(0);
+
+                if (log) System.out.printf("Input word is now %s\n", inputWord);
             	i--;
             	j--;
             }
@@ -133,10 +147,8 @@ public class Main {
             }
         }
         Collections.reverse(words);
-        return words;
+        return inputWord.isEmpty() ? words : Collections.emptyList();
     }
-    
-    
 
     static void loadWordsToCollection(String fileName, Collection<String> c) {
         try {
@@ -153,11 +165,12 @@ public class Main {
     }
 
     static void printResult(String inputWord, List<String> splitWords) {
-        System.out.printf(
-                "%s can be split into %d AiW words: %s\n",
-                inputWord,
-                splitWords.size(),
-                String.join(", ", splitWords)
-        );
+        if (splitWords.isEmpty()) System.out.printf("%s cannot be split into AiW words.\n", inputWord);
+        else System.out.printf(
+                    "%s can be split into %d AiW words: %s\n",
+                    inputWord,
+                    splitWords.size(),
+                    String.join(", ", splitWords)
+            );
     }
 }
